@@ -14,16 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          description: string | null
+          id: string
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      restaurants: {
+        Row: {
+          auto_send_days: string[] | null
+          auto_send_enabled: boolean | null
+          created_at: string
+          done_for_you_mode: boolean | null
+          id: string
+          join_incentive: string | null
+          max_auto_per_week: number | null
+          meal_service: string | null
+          name: string
+          owner_user_id: string
+          phone: string | null
+          promo_styles: string[] | null
+          public_signup_token: string | null
+          slow_days: string[] | null
+          timezone: string | null
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          auto_send_days?: string[] | null
+          auto_send_enabled?: boolean | null
+          created_at?: string
+          done_for_you_mode?: boolean | null
+          id?: string
+          join_incentive?: string | null
+          max_auto_per_week?: number | null
+          meal_service?: string | null
+          name: string
+          owner_user_id: string
+          phone?: string | null
+          promo_styles?: string[] | null
+          public_signup_token?: string | null
+          slow_days?: string[] | null
+          timezone?: string | null
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auto_send_days?: string[] | null
+          auto_send_enabled?: boolean | null
+          created_at?: string
+          done_for_you_mode?: boolean | null
+          id?: string
+          join_incentive?: string | null
+          max_auto_per_week?: number | null
+          meal_service?: string | null
+          name?: string
+          owner_user_id?: string
+          phone?: string | null
+          promo_styles?: string[] | null
+          public_signup_token?: string | null
+          slow_days?: string[] | null
+          timezone?: string | null
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +290,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
