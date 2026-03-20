@@ -169,6 +169,7 @@ export default function CampaignReview() {
     }
   };
 
+  return (
     <div className="min-h-screen bg-background">
       <DashboardNav />
       <main className="container max-w-5xl py-10">
