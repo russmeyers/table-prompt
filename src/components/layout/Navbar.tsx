@@ -69,13 +69,20 @@ export function DashboardNav() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <select className="rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground">
             <option>Bella's Italian Kitchen</option>
           </select>
-          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
-            MR
-          </div>
+          <Link to="/admin" className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Admin">
+            <Shield className="h-4 w-4" />
+          </Link>
+          <button
+            onClick={async () => { await supabase.auth.signOut(); toast.success("Logged out"); window.location.href = "/login"; }}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            title="Log out"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </nav>
