@@ -41,6 +41,326 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_date: string
+          id: string
+          name: string
+          suggested_campaign_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_date: string
+          id?: string
+          name: string
+          suggested_campaign_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          id?: string
+          name?: string
+          suggested_campaign_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_suggested_campaign_id_fkey"
+            columns: ["suggested_campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_sends: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          failed_count: number | null
+          id: string
+          provider: string | null
+          provider_cost: number | null
+          sent_count: number | null
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          failed_count?: number | null
+          id?: string
+          provider?: string | null
+          provider_cost?: number | null
+          sent_count?: number | null
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          failed_count?: number | null
+          id?: string
+          provider?: string | null
+          provider_cost?: number | null
+          sent_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_sends_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_suggestions: {
+        Row: {
+          created_at: string
+          id: string
+          recommended_message: string | null
+          recommended_send_time: string | null
+          restaurant_id: string
+          status: string
+          suggestion_reason: string | null
+          target_count: number | null
+          title: string
+          trigger_type: string
+          workflow: Json | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recommended_message?: string | null
+          recommended_send_time?: string | null
+          restaurant_id: string
+          status?: string
+          suggestion_reason?: string | null
+          target_count?: number | null
+          title: string
+          trigger_type?: string
+          workflow?: Json | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recommended_message?: string | null
+          recommended_send_time?: string | null
+          restaurant_id?: string
+          status?: string
+          suggestion_reason?: string | null
+          target_count?: number | null
+          title?: string
+          trigger_type?: string
+          workflow?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_suggestions_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          created_at: string
+          estimated_cost: number | null
+          estimated_redemptions: number | null
+          estimated_revenue: number | null
+          id: string
+          message_body: string
+          redemption_code: string | null
+          restaurant_id: string
+          sent_at: string | null
+          status: string
+          suggestion_id: string | null
+          target_count: number | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          estimated_cost?: number | null
+          estimated_redemptions?: number | null
+          estimated_revenue?: number | null
+          id?: string
+          message_body: string
+          redemption_code?: string | null
+          restaurant_id: string
+          sent_at?: string | null
+          status?: string
+          suggestion_id?: string | null
+          target_count?: number | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          estimated_cost?: number | null
+          estimated_redemptions?: number | null
+          estimated_revenue?: number | null
+          id?: string
+          message_body?: string
+          redemption_code?: string | null
+          restaurant_id?: string
+          sent_at?: string | null
+          status?: string
+          suggestion_id?: string | null
+          target_count?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaigns_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contacts: {
+        Row: {
+          consent_source: string | null
+          created_at: string
+          email: string | null
+          first_name: string
+          id: string
+          last_name: string | null
+          mobile_number: string
+          opted_in: boolean
+          opted_in_at: string | null
+          opted_out: boolean
+          opted_out_at: string | null
+          restaurant_id: string
+          source: string | null
+          tags: string[] | null
+        }
+        Insert: {
+          consent_source?: string | null
+          created_at?: string
+          email?: string | null
+          first_name: string
+          id?: string
+          last_name?: string | null
+          mobile_number: string
+          opted_in?: boolean
+          opted_in_at?: string | null
+          opted_out?: boolean
+          opted_out_at?: string | null
+          restaurant_id: string
+          source?: string | null
+          tags?: string[] | null
+        }
+        Update: {
+          consent_source?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string | null
+          mobile_number?: string
+          opted_in?: boolean
+          opted_in_at?: string | null
+          opted_out?: boolean
+          opted_out_at?: string | null
+          restaurant_id?: string
+          source?: string | null
+          tags?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_logs: {
+        Row: {
+          created_at: string
+          destination: string
+          id: string
+          message_body: string | null
+          notification_type: string
+          restaurant_id: string
+          status: string
+          suggestion_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          destination: string
+          id?: string
+          message_body?: string | null
+          notification_type?: string
+          restaurant_id: string
+          status?: string
+          suggestion_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          destination?: string
+          id?: string
+          message_body?: string | null
+          notification_type?: string
+          restaurant_id?: string
+          status?: string
+          suggestion_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_logs_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_logs_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          example_message: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          example_message?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          example_message?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
