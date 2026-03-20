@@ -114,14 +114,15 @@ function FeatureCarousel() {
 
   useEffect(() => {
     if (paused) return;
-    const interval = setInterval(next, 4000);
+    const interval = setInterval(next, 3500);
     return () => clearInterval(interval);
   }, [paused, next]);
 
-  const f = features[current];
+  // Show current and peek neighbors
+  const getIndex = (offset: number) => (current + offset + features.length) % features.length;
 
   return (
-    <section id="features" className="border-t border-border/60 py-20 md:py-24">
+    <section id="features" className="border-t border-border/60 py-20 md:py-24 overflow-hidden">
       <div className="container">
         <ScrollReveal className="mx-auto max-w-lg text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl" style={{ lineHeight: "1.2", textWrap: "balance" }}>
@@ -130,22 +131,29 @@ function FeatureCarousel() {
         </ScrollReveal>
 
         <div
-          className="mx-auto mt-12 max-w-md"
+          className="mx-auto mt-12 max-w-4xl"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className="relative rounded-xl border border-border bg-card p-8 shadow-card min-h-[180px] transition-all duration-500">
-            <div key={current} className="animate-reveal-up text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
-                <f.icon className="h-5 w-5 text-primary" />
-              </div>
-              <h3 className="mt-4 text-base font-semibold text-foreground">{f.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+          <div className="relative flex items-center justify-center gap-4">
+            {/* Previous peek */}
+            <div className="hidden md:block w-48 shrink-0 opacity-40 scale-90 transition-all duration-500">
+              <FeatureCard feature={features[getIndex(-1)]} />
+            </div>
+
+            {/* Current */}
+            <div className="w-full max-w-sm transition-all duration-500" key={current}>
+              <FeatureCard feature={features[current]} active />
+            </div>
+
+            {/* Next peek */}
+            <div className="hidden md:block w-48 shrink-0 opacity-40 scale-90 transition-all duration-500">
+              <FeatureCard feature={features[getIndex(1)]} />
             </div>
           </div>
 
           {/* Controls */}
-          <div className="mt-4 flex items-center justify-center gap-3">
+          <div className="mt-6 flex items-center justify-center gap-3">
             <button
               onClick={prev}
               className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors active:scale-95"
@@ -174,6 +182,19 @@ function FeatureCarousel() {
         </div>
       </div>
     </section>
+  );
+}
+
+function FeatureCard({ feature, active }: { feature: { icon: any; title: string; desc: string }; active?: boolean }) {
+  const Icon = feature.icon;
+  return (
+    <div className={`rounded-xl border border-border bg-card shadow-card p-8 text-center transition-all duration-500 ${active ? "min-h-[220px]" : "min-h-[160px]"}`}>
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-secondary">
+        <Icon className="h-6 w-6 text-primary" />
+      </div>
+      <h3 className={`mt-4 font-semibold text-foreground ${active ? "text-lg" : "text-sm"}`}>{feature.title}</h3>
+      {active && <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>}
+    </div>
   );
 }
 
