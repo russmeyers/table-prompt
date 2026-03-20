@@ -5,7 +5,7 @@ import { WorkflowTimeline, WorkflowBadge } from "@/components/WorkflowTimeline";
 import { useSuggestion, useUpdateSuggestion, useCreateCampaign, useRestaurant, useContacts } from "@/hooks/use-data";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Send, Clock, Save, SkipForward, Sparkles, Info, Loader2 } from "lucide-react";
+import { Send, Clock, Save, SkipForward, Sparkles, Info, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
