@@ -219,6 +219,10 @@ export default function CampaignReview() {
                   {createCampaign.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   Send Now
                 </Button>
+                <Button variant="outline" size="lg" onClick={handleSendTest} disabled={sendingTest}>
+                  {sendingTest ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
+                  Send Test to My Phone
+                </Button>
                 <Button variant="outline" size="lg" onClick={handleSaveDraft}>
                   <Save className="h-4 w-4" /> Save Draft
                 </Button>
