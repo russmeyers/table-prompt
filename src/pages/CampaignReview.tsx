@@ -145,7 +145,30 @@ export default function CampaignReview() {
     }
   };
 
-  return (
+  const handleSendTest = async () => {
+    if (!restaurant?.phone) {
+      toast.error("No phone number on file", { description: "Add your phone number in Settings first." });
+      return;
+    }
+    setSendingTest(true);
+    try {
+      const fullMessage = message + (redemptionCode ? `\n\nShow this text or use code ${redemptionCode}` : "") + "\n\nReply STOP to unsubscribe";
+      const { data, error } = await supabase.functions.invoke("send-sms", {
+        body: { action: "send_single", phone: restaurant.phone, message: `[TEST] ${fullMessage}` },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast.success("Test sent!", { description: `Sent to ${restaurant.phone}` });
+      } else {
+        toast.error("Test failed", { description: data?.error || "Unknown error" });
+      }
+    } catch (err: any) {
+      toast.error("Failed to send test", { description: err.message });
+    } finally {
+      setSendingTest(false);
+    }
+  };
+
     <div className="min-h-screen bg-background">
       <DashboardNav />
       <main className="container max-w-5xl py-10">
