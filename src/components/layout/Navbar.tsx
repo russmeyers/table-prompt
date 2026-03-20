@@ -1,10 +1,13 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Shield, LogOut } from "lucide-react";
+import { MessageSquare, Shield, LogOut, Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export function LandingNav() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
@@ -15,19 +18,43 @@ export function LandingNav() {
           <span className="text-lg font-bold text-foreground tracking-tight">TableText</span>
         </Link>
         <div className="hidden items-center gap-8 md:flex">
-          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
           <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
-          <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
+          <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="hidden items-center gap-3 md:flex">
           <Button variant="ghost" size="sm" asChild>
             <Link to="/login">Log In</Link>
           </Button>
           <Button variant="accent" size="sm" asChild>
-            <Link to="/onboarding">Start Free Trial</Link>
+            <Link to="/onboarding">See How It Works</Link>
           </Button>
         </div>
+
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted md:hidden"
+          aria-label="Toggle menu"
+        >
+          {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="border-t border-border/60 bg-background px-4 pb-4 pt-2 md:hidden">
+          <div className="flex flex-col gap-2">
+            <a href="#how-it-works" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted">How It Works</a>
+            <a href="#features" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted">Features</a>
+            <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted">Pricing</Link>
+            <Link to="/login" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted">Log In</Link>
+            <Button variant="accent" size="sm" className="mt-1" asChild>
+              <Link to="/onboarding" onClick={() => setMenuOpen(false)}>See How It Works</Link>
+            </Button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
@@ -70,9 +97,6 @@ export function DashboardNav() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <select className="rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground">
-            <option>Bella's Italian Kitchen</option>
-          </select>
           <Link to="/admin" className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title="Admin">
             <Shield className="h-4 w-4" />
           </Link>

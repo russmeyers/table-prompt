@@ -13,13 +13,12 @@ export default function PricingPage() {
         <ScrollReveal className="mx-auto max-w-xl text-center">
           <h1
             className="text-3xl font-bold tracking-tight text-foreground md:text-4xl"
-            style={{ lineHeight: "1.15" }}
+            style={{ lineHeight: "1.15", textWrap: "balance" }}
           >
             Simple pricing that helps you fill seats
           </h1>
           <p className="mt-4 text-base text-muted-foreground">
-            No complicated tools. No marketing experience needed. Just smart
-            reminders, ready-to-send texts, and more customers when you need them.
+            No complicated tools. No marketing experience needed.
           </p>
         </ScrollReveal>
 
@@ -40,9 +39,7 @@ export default function PricingPage() {
                 )}
                 <h3 className="text-base font-bold text-foreground">{plan.name}</h3>
                 <div className="mt-2">
-                  <span className="text-3xl font-bold text-foreground tabular-nums">
-                    ${plan.price}
-                  </span>
+                  <span className="text-3xl font-bold text-foreground tabular-nums">${plan.price}</span>
                   <span className="text-sm text-muted-foreground">/mo</span>
                 </div>
                 <ul className="mt-5 flex-1 space-y-2">
@@ -54,9 +51,7 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 {plan.tagline && (
-                  <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-                    {plan.tagline}
-                  </p>
+                  <p className="mt-4 text-xs leading-relaxed text-muted-foreground">{plan.tagline}</p>
                 )}
                 <Button
                   variant={plan.popular ? "accent" : "outline"}
@@ -64,7 +59,7 @@ export default function PricingPage() {
                   size="sm"
                   asChild
                 >
-                  <Link to="/onboarding">Start Free Trial</Link>
+                  <Link to="/onboarding">Get Started</Link>
                 </Button>
               </div>
             </ScrollReveal>
@@ -75,42 +70,23 @@ export default function PricingPage() {
           <div className="mx-auto mt-12 max-w-md rounded-xl border border-border bg-card p-6 text-center shadow-card">
             <p className="text-sm font-semibold text-foreground">Simple, Transparent Overage</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Need more texts? Just <strong className="text-foreground">$0.03 per additional message</strong>. No hidden fees, no surprises.
+              Need more texts? Just <strong className="text-foreground">$0.03 per additional message</strong>. No hidden fees.
             </p>
           </div>
         </ScrollReveal>
 
-        {/* Testimonials */}
-        <div className="mx-auto mt-16 grid max-w-3xl gap-5 md:grid-cols-3">
-          {[
-            "It reminds me when I should actually send something.",
-            "I don't have to think — it's already written.",
-            "I can fill a slow night in minutes.",
-          ].map((q, i) => (
-            <ScrollReveal key={i} delay={i * 70}>
-              <blockquote className="rounded-xl border border-border bg-card p-5 shadow-card">
-                <p className="text-sm italic leading-relaxed text-foreground">"{q}"</p>
-                <p className="mt-3 text-xs text-muted-foreground">— Restaurant Owner</p>
-              </blockquote>
-            </ScrollReveal>
-          ))}
-        </div>
-
-        {/* Value prop + CTA */}
-        <ScrollReveal className="mx-auto mt-16 max-w-lg text-center">
+        {/* CTA */}
+        <ScrollReveal className="mx-auto mt-16 max-w-md text-center">
           <h2 className="text-xl font-bold text-foreground md:text-2xl" style={{ lineHeight: "1.25" }}>
-            This isn't just texting software
+            Start simple. See results fast.
           </h2>
-          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-            It's a system that tells you when to send, writes it for you, and helps you fill seats on slow days.
-          </p>
-          <Button variant="hero" size="lg" className="mt-8" asChild>
-            <Link to="/onboarding">Start Free Trial <ArrowRight className="h-4 w-4" /></Link>
+          <Button variant="hero" size="lg" className="mt-6" asChild>
+            <Link to="/onboarding">See How It Works <ArrowRight className="h-4 w-4" /></Link>
           </Button>
         </ScrollReveal>
       </main>
 
-      <footer className="border-t border-border/60 bg-card py-8">
+      <footer className="border-t border-border/60 py-8">
         <div className="container flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
             <MessageSquare className="h-3 w-3 text-primary-foreground" />

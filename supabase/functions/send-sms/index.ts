@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
 
       // Build the review link
       const appUrl = Deno.env.get("APP_URL") || "https://tabletext.app";
-      const reviewLink = `${appUrl}/campaign-review/${suggestion.id}`;
+      const reviewLink = `${appUrl}/campaigns/review/${suggestion.id}`;
 
       // Build owner notification message
       const ownerMessage = `TableText: ${suggestion.suggestion_reason}\n\n"${suggestion.title}"\n\nReview: ${reviewLink}\n\nReply SKIP to dismiss.`;

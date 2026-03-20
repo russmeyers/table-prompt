@@ -5,7 +5,7 @@ import { WorkflowTimeline, WorkflowBadge } from "@/components/WorkflowTimeline";
 import { useSuggestion, useUpdateSuggestion, useCreateCampaign, useRestaurant, useContacts } from "@/hooks/use-data";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Send, Clock, Save, SkipForward, Sparkles, Info, Loader2 } from "lucide-react";
+import { Send, Clock, Save, SkipForward, Sparkles, Info, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,6 +21,7 @@ export default function CampaignReview() {
   const [message, setMessage] = useState("");
   const [redemptionCode, setRedemptionCode] = useState("PROMO10");
   const [rewriting, setRewriting] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
 
   const optedInCount = (contacts ?? []).filter(c => c.opted_in && !c.opted_out).length;
 
@@ -144,6 +145,30 @@ export default function CampaignReview() {
     }
   };
 
+  const handleSendTest = async () => {
+    if (!restaurant?.phone) {
+      toast.error("No phone number on file", { description: "Add your phone number in Settings first." });
+      return;
+    }
+    setSendingTest(true);
+    try {
+      const fullMessage = message + (redemptionCode ? `\n\nShow this text or use code ${redemptionCode}` : "") + "\n\nReply STOP to unsubscribe";
+      const { data, error } = await supabase.functions.invoke("send-sms", {
+        body: { action: "send_single", phone: restaurant.phone, message: `[TEST] ${fullMessage}` },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast.success("Test sent!", { description: `Sent to ${restaurant.phone}` });
+      } else {
+        toast.error("Test failed", { description: data?.error || "Unknown error" });
+      }
+    } catch (err: any) {
+      toast.error("Failed to send test", { description: err.message });
+    } finally {
+      setSendingTest(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <DashboardNav />
@@ -218,6 +243,10 @@ export default function CampaignReview() {
                 <Button variant="accent" size="lg" onClick={handleSend} disabled={createCampaign.isPending}>
                   {createCampaign.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   Send Now
+                </Button>
+                <Button variant="outline" size="lg" onClick={handleSendTest} disabled={sendingTest}>
+                  {sendingTest ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
+                  Send Test to My Phone
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleSaveDraft}>
                   <Save className="h-4 w-4" /> Save Draft
