@@ -57,8 +57,10 @@ export default function Onboarding() {
 
   const handleFinish = async () => {
     if (!userId) {
-      toast.error("Please log in first", { description: "You need an account to complete setup." });
-      navigate("/login");
+      // Save onboarding form data so we can resume after signup
+      sessionStorage.setItem("tabletext_onboarding", JSON.stringify(form));
+      toast.info("Create your account first", { description: "Sign up to complete setup." });
+      navigate("/login?signup=true");
       return;
     }
 
