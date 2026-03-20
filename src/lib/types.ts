@@ -43,7 +43,23 @@ export interface Contact {
   createdAt: string;
 }
 
-export type SuggestionStatus = "pending" | "approved" | "sent" | "skipped" | "dismissed";
+// ── Workflow states ──────────────────────────────────────────
+export type WorkflowStep =
+  | "suggestion_created"
+  | "owner_notified"
+  | "owner_opened_link"
+  | "owner_edited"
+  | "owner_approved"
+  | "sent"
+  | "skipped";
+
+export interface WorkflowEvent {
+  step: WorkflowStep;
+  timestamp: string;
+  note?: string;
+}
+
+export type SuggestionStatus = "pending" | "notified" | "in_review" | "approved" | "sent" | "skipped" | "dismissed";
 export type TriggerType = "inactivity" | "weather" | "weekday" | "meal_period" | "calendar_event" | "manual" | "emergency";
 
 export interface CampaignSuggestion {
@@ -56,6 +72,7 @@ export interface CampaignSuggestion {
   recommendedSendTime: string;
   targetCount: number;
   status: SuggestionStatus;
+  workflow: WorkflowEvent[];
   createdAt: string;
 }
 

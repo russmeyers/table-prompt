@@ -37,9 +37,54 @@ export const mockContacts: Contact[] = [
 ];
 
 export const mockSuggestions: CampaignSuggestion[] = [
-  { id: "sug-1", restaurantId: "rest-1", title: "Rainy Night Comfort Special", triggerType: "weather", suggestionReason: "Rain forecast tonight at 6pm — comfort food promo could drive traffic", recommendedMessage: "Rainy night calls for comfort food 🍲 Stop in tonight and enjoy a free soup with any entrée. See you soon!", recommendedSendTime: "2025-03-20T14:00:00Z", targetCount: 842, status: "pending", createdAt: "2025-03-20T09:00:00Z" },
-  { id: "sug-2", restaurantId: "rest-1", title: "Tuesday Dinner Push", triggerType: "weekday", suggestionReason: "Tuesday is your slow night — fill seats with a dinner deal", recommendedMessage: "Tuesday dinner plans? Join us tonight for 20% off all pasta dishes. Bring a friend and double the fun 🍝", recommendedSendTime: "2025-03-21T11:00:00Z", targetCount: 842, status: "pending", createdAt: "2025-03-20T08:00:00Z" },
-  { id: "sug-3", restaurantId: "rest-1", title: "Re-Engagement Text", triggerType: "inactivity", suggestionReason: "No campaign sent in 6 days — keep your guests engaged", recommendedMessage: "It's been a while! We miss you at Bella's. Come in this week for a complimentary dessert with dinner 🎂", recommendedSendTime: "2025-03-20T16:00:00Z", targetCount: 842, status: "pending", createdAt: "2025-03-19T09:00:00Z" },
+  {
+    id: "sug-1",
+    restaurantId: "rest-1",
+    title: "Rainy Night Comfort Special",
+    triggerType: "weather",
+    suggestionReason: "Rain forecast tonight — comfort food drives traffic on wet evenings",
+    recommendedMessage: "Rainy night calls for comfort food 🍲 Stop in tonight and enjoy a free soup with any entrée. See you soon!",
+    recommendedSendTime: "2025-03-20T14:00:00Z",
+    targetCount: 842,
+    status: "notified",
+    workflow: [
+      { step: "suggestion_created", timestamp: "2025-03-20T09:00:00Z" },
+      { step: "owner_notified", timestamp: "2025-03-20T09:01:00Z", note: "SMS sent to (555) 123-4567" },
+    ],
+    createdAt: "2025-03-20T09:00:00Z",
+  },
+  {
+    id: "sug-2",
+    restaurantId: "rest-1",
+    title: "Tuesday Dinner Push",
+    triggerType: "weekday",
+    suggestionReason: "Tuesday is usually slow — fill seats with a dinner deal",
+    recommendedMessage: "Tuesday dinner plans? Join us tonight for 20% off all pasta dishes. Bring a friend 🍝",
+    recommendedSendTime: "2025-03-21T11:00:00Z",
+    targetCount: 842,
+    status: "pending",
+    workflow: [
+      { step: "suggestion_created", timestamp: "2025-03-20T08:00:00Z" },
+    ],
+    createdAt: "2025-03-20T08:00:00Z",
+  },
+  {
+    id: "sug-3",
+    restaurantId: "rest-1",
+    title: "Re-Engagement Text",
+    triggerType: "inactivity",
+    suggestionReason: "No campaign sent in 6 days — keep guests engaged",
+    recommendedMessage: "It's been a while! We miss you at Bella's. Come in this week for a complimentary dessert with dinner 🎂",
+    recommendedSendTime: "2025-03-20T16:00:00Z",
+    targetCount: 842,
+    status: "in_review",
+    workflow: [
+      { step: "suggestion_created", timestamp: "2025-03-19T09:00:00Z" },
+      { step: "owner_notified", timestamp: "2025-03-19T09:02:00Z", note: "SMS sent to (555) 123-4567" },
+      { step: "owner_opened_link", timestamp: "2025-03-19T10:15:00Z" },
+    ],
+    createdAt: "2025-03-19T09:00:00Z",
+  },
 ];
 
 export const mockCampaigns: Campaign[] = [
@@ -64,7 +109,6 @@ export const mockCalendarEvents: CalendarEvent[] = [
   { id: "evt-4", name: "Mother's Day", date: "2025-05-11", description: "Brunch and prix fixe dinners" },
   { id: "evt-5", name: "Memorial Day Weekend", date: "2025-05-26", description: "Holiday weekend specials" },
   { id: "evt-6", name: "Father's Day", date: "2025-06-15", description: "Special dinner promotions" },
-  { id: "evt-7", name: "4th of July", date: "2025-07-04", description: "BBQ and celebration specials" },
 ];
 
 export const mockPricingPlans: PricingPlan[] = [
@@ -80,4 +124,25 @@ export const dashboardStats = {
   lastCampaignDate: "Mar 14, 2025",
   estimatedTextsUsed: 2485,
   textsIncluded: 5000,
+};
+
+// ── Workflow helpers ──────────────────────────────────────
+export const workflowStepLabels: Record<string, string> = {
+  suggestion_created: "Suggestion Created",
+  owner_notified: "Owner Notified by SMS",
+  owner_opened_link: "Owner Opened Review Link",
+  owner_edited: "Owner Edited Message",
+  owner_approved: "Owner Approved",
+  sent: "Campaign Sent",
+  skipped: "Owner Skipped",
+};
+
+export const workflowStepColors: Record<string, string> = {
+  suggestion_created: "bg-muted text-muted-foreground",
+  owner_notified: "bg-blue-50 text-blue-700",
+  owner_opened_link: "bg-amber-50 text-amber-700",
+  owner_edited: "bg-purple-50 text-purple-700",
+  owner_approved: "bg-emerald-50 text-emerald-700",
+  sent: "bg-emerald-100 text-emerald-800",
+  skipped: "bg-muted text-muted-foreground",
 };
