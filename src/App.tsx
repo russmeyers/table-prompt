@@ -15,6 +15,8 @@ import Calendar from "./pages/Calendar";
 import Onboarding from "./pages/Onboarding";
 import JoinSignup from "./pages/JoinSignup";
 import PricingPage from "./pages/Pricing";
+import Login from "./pages/Login";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,7 +40,8 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/join/:token" element={<JoinSignup />} />
           <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/login" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
