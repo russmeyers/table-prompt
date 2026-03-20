@@ -21,6 +21,7 @@ export default function CampaignReview() {
   const [message, setMessage] = useState("");
   const [redemptionCode, setRedemptionCode] = useState("PROMO10");
   const [rewriting, setRewriting] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
 
   const optedInCount = (contacts ?? []).filter(c => c.opted_in && !c.opted_out).length;
 
