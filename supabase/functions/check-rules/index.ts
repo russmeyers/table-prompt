@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
     // Get all active restaurants
     const { data: restaurants } = await supabase
       .from("restaurants")
-      .select("id, name, type, slow_days, meal_service, phone");
+      .select("id, name, type, slow_days, meal_service, phone, timezone");
 
     if (!restaurants || restaurants.length === 0) {
       return new Response(JSON.stringify({ message: "No restaurants to check" }), {
@@ -29,22 +29,109 @@ Deno.serve(async (req) => {
 
     const results: any[] = [];
     const now = new Date();
-    const dayName = now.toLocaleDateString("en-US", { weekday: "long" });
-    const hour = now.getHours();
 
     for (const restaurant of restaurants) {
+      // Use restaurant timezone for day/hour calc
+      const tz = restaurant.timezone || "America/New_York";
+      const localTime = new Date(now.toLocaleString("en-US", { timeZone: tz }));
+      const dayName = localTime.toLocaleDateString("en-US", { weekday: "long" });
+      const hour = localTime.getHours();
+
       // Skip if already has a pending/notified suggestion today
+      const todayStart = new Date(localTime.getFullYear(), localTime.getMonth(), localTime.getDate()).toISOString();
       const { data: existing } = await supabase
         .from("campaign_suggestions")
         .select("id")
         .eq("restaurant_id", restaurant.id)
         .in("status", ["pending", "notified", "in_review"])
-        .gte("created_at", new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString())
+        .gte("created_at", todayStart)
         .limit(1);
 
       if (existing && existing.length > 0) continue;
 
-      // Rule 1: Inactivity — no campaign sent in 5+ days
+      // === RULE 1: Calendar events within next 3 days ===
+      const threeDaysOut = new Date(localTime);
+      threeDaysOut.setDate(threeDaysOut.getDate() + 3);
+      const todayStr = localTime.toISOString().split("T")[0];
+      const futureStr = threeDaysOut.toISOString().split("T")[0];
+
+      const { data: upcomingEvents } = await supabase
+        .from("calendar_events")
+        .select("id, name, event_date, description")
+        .gte("event_date", todayStr)
+        .lte("event_date", futureStr)
+        .is("suggested_campaign_id", null)
+        .limit(1);
+
+      if (upcomingEvents && upcomingEvents.length > 0) {
+        const event = upcomingEvents[0];
+        const res = await callCreateSuggestion(supabaseUrl, {
+          restaurantId: restaurant.id,
+          triggerType: "calendar_event",
+          triggerReason: `${event.name} is coming up on ${event.event_date} — perfect time for a themed promotion`,
+          promoStyle: "event",
+        });
+        // Link event to suggestion
+        if (res?.suggestion?.id) {
+          await supabase.from("calendar_events").update({ suggested_campaign_id: res.suggestion.id }).eq("id", event.id);
+        }
+        results.push({ restaurant: restaurant.name, trigger: "calendar_event", event: event.name, result: res });
+        continue;
+      }
+
+      // === RULE 2: Weather trigger (free Open-Meteo API, no key needed) ===
+      if (hour >= 8 && hour <= 12) {
+        try {
+          // Use a default US location; in production, store lat/lon per restaurant
+          const weatherRes = await fetch(
+            "https://api.open-meteo.com/v1/forecast?latitude=40.7128&longitude=-74.006&hourly=weathercode,temperature_2m&timezone=America/New_York&forecast_days=1"
+          );
+          if (weatherRes.ok) {
+            const weatherData = await weatherRes.json();
+            const codes = weatherData.hourly?.weathercode ?? [];
+            const temps = weatherData.hourly?.temperature_2m ?? [];
+            // Check evening hours (17-21) for bad weather
+            const eveningCodes = codes.slice(17, 22);
+            const eveningTemps = temps.slice(17, 22);
+            const hasRain = eveningCodes.some((c: number) => c >= 51 && c <= 82); // drizzle, rain, showers
+            const hasSnow = eveningCodes.some((c: number) => c >= 71 && c <= 77);
+            const isCold = eveningTemps.some((t: number) => t < 2); // below ~35°F
+            const isHot = eveningTemps.some((t: number) => t > 35); // above ~95°F
+
+            let weatherReason = "";
+            let promoStyle = "special";
+            if (hasRain) {
+              weatherReason = "Rain in the forecast tonight — comfort food promo could drive orders";
+              promoStyle = "comfort";
+            } else if (hasSnow) {
+              weatherReason = "Snow expected tonight — warm up guests with a cozy dining deal";
+              promoStyle = "comfort";
+            } else if (isCold) {
+              weatherReason = "Cold night ahead — perfect for a warm meal promotion";
+              promoStyle = "comfort";
+            } else if (isHot) {
+              weatherReason = "Hot day today — promote cold drinks or patio specials";
+              promoStyle = "special";
+            }
+
+            if (weatherReason) {
+              const res = await callCreateSuggestion(supabaseUrl, {
+                restaurantId: restaurant.id,
+                triggerType: "weather",
+                triggerReason: weatherReason,
+                promoStyle,
+              });
+              results.push({ restaurant: restaurant.name, trigger: "weather", result: res });
+              continue;
+            }
+          }
+        } catch (e) {
+          console.error("Weather check failed:", e);
+          // Non-fatal, continue to other rules
+        }
+      }
+
+      // === RULE 3: Inactivity — no campaign sent in 5+ days ===
       const { data: recentCampaigns } = await supabase
         .from("campaigns")
         .select("sent_at")
@@ -66,10 +153,10 @@ Deno.serve(async (req) => {
           promoStyle: "special",
         });
         results.push({ restaurant: restaurant.name, trigger: "inactivity", result: res });
-        continue; // One suggestion per restaurant per run
+        continue;
       }
 
-      // Rule 2: Slow day
+      // === RULE 4: Slow day ===
       const slowDays = restaurant.slow_days ?? [];
       if (slowDays.includes(dayName) && hour >= 9 && hour <= 11) {
         const res = await callCreateSuggestion(supabaseUrl, {
@@ -82,13 +169,12 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Rule 3: Meal period approaching
+      // === RULE 5: Meal period approaching ===
       const isLunchWindow = hour >= 9 && hour <= 10;
       const isDinnerWindow = hour >= 14 && hour <= 16;
       const service = restaurant.meal_service ?? "both";
 
       if (isLunchWindow && (service === "lunch" || service === "both")) {
-        // Only suggest if no recent lunch campaign
         const res = await callCreateSuggestion(supabaseUrl, {
           restaurantId: restaurant.id,
           triggerType: "meal_period",
@@ -126,12 +212,12 @@ Deno.serve(async (req) => {
 
 async function callCreateSuggestion(supabaseUrl: string, body: any) {
   try {
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const res = await fetch(`${supabaseUrl}/functions/v1/create-suggestion`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${anonKey}`,
+        Authorization: `Bearer ${serviceKey}`,
       },
       body: JSON.stringify(body),
     });
