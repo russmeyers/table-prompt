@@ -112,9 +112,10 @@ export const mockCalendarEvents: CalendarEvent[] = [
 ];
 
 export const mockPricingPlans: PricingPlan[] = [
-  { id: "starter", name: "Starter", price: 29, textsIncluded: 500, overageRate: 0.02, features: ["500 texts/month", "Campaign suggestions", "Owner approval flow", "Basic dashboard", "Email support"] },
-  { id: "growth", name: "Growth", price: 79, textsIncluded: 2000, overageRate: 0.015, features: ["2,000 texts/month", "AI message generation", "Offer templates", "Redemption tracking", "List growth tools", "Priority support"], popular: true },
-  { id: "pro", name: "Pro", price: 149, textsIncluded: 5000, overageRate: 0.01, features: ["5,000 texts/month", "Everything in Growth", "Auto-send mode", "Multi-location support", "Calendar integration", "Dedicated support"] },
+  { id: "starter", name: "Starter", price: 29, textsIncluded: 500, overageRate: 0.03, features: ["Up to 500 texts/month", "Smart campaign suggestions", "Easy 1-click sending", "QR code signup page", "Pre-built offer templates", "Simple performance dashboard"], tagline: "A simple way to stay consistent and start building your customer list." },
+  { id: "launch", name: "Launch", price: 79, textsIncluded: 2500, overageRate: 0.03, features: ["Up to 2,500 texts/month", "Everything in Starter, plus:", "AI-written text messages", "Smart reminders sent to you", "\"We're slow — send now\" button", "Basic redemption tracking"], popular: true, tagline: "This is where most restaurants start seeing real results." },
+  { id: "growth", name: "Growth", price: 149, textsIncluded: 6000, overageRate: 0.03, features: ["Up to 6,000 texts/month", "Everything in Launch, plus:", "Optional auto-send campaigns", "Built-in campaign calendar", "Smarter timing suggestions", "Priority sending"], tagline: "Stay top of mind with your customers — without thinking about it." },
+  { id: "pro", name: "Pro", price: 249, textsIncluded: 12000, overageRate: 0.03, features: ["Up to 12,000 texts/month", "Everything in Growth, plus:", "Multi-location support", "Expanded offer library", "Simple performance insights", "\"Done-for-you\" campaign option"], tagline: "Scale your marketing without adding more work." },
 ];
 
 export const dashboardStats = {
