@@ -118,4 +118,5 @@ export interface PricingPlan {
   overageRate: number;
   features: string[];
   popular?: boolean;
+  tagline?: string;
 }
